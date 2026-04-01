@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Data Repository Concept</title>
+  <style>
+    @font-face {
+      font-family: "Geist";
+      font-style: normal;
+      font-weight: 100 900;
+      font-display: swap;
+      src: url("https://www.pizzint.watch/_next/static/media/4cf2300e9c8272f7-s.p.woff2") format("woff2");
+    }
+
+    @font-face {
+      font-family: "Geist Mono";
+      font-style: normal;
+      font-weight: 100 900;
+      font-display: swap;
+      src: url("https://www.pizzint.watch/_next/static/media/93f479601ee12b01-s.p.woff2") format("woff2");
+    }
+
+    @font-face {
+      font-family: "VT323";
+      font-style: normal;
+      font-weight: 400;
+      font-display: swap;
+      src: url("https://www.pizzint.watch/_next/static/media/b7bd7951037de757-s.p.woff2") format("woff2");
+    }
+
+    :root {
+      --bg: #050907;
+      --bg-soft: #09110d;
+      --panel: rgba(10, 20, 15, 0.9);
+      --panel-strong: rgba(13, 26, 19, 0.96);
+      --panel-glass: rgba(16, 31, 24, 0.78);
+      --grid: rgba(124, 160, 134, 0.22);
+      --line: rgba(124, 160, 134, 0.38);
+      --signal: #97ffab;
+      --signal-soft: rgba(151, 255, 171, 0.14);
+      --amber: #ffcd63;
+      --amber-soft: rgba(255, 205, 99, 0.14);
+      --cyan: #7cd9ff;
+      --cyan-soft: rgba(124, 217, 255, 0.14);
+      --red: #ff8b78;
+      --text: #ddebe2;
+      --muted: #9aaea1;
+      --font-sans: "Geist", Arial, Helvetica, sans-serif;
+      --font-mono: "Geist Mono", "Courier New", monospace;
+      --font-display: "VT323", "Geist Mono", monospace;
+      --shadow: 0 24px 50px rgba(0, 0, 0, 0.34);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: var(--font-sans);
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(151, 255, 171, 0.12), transparent 22%),
+        radial-gradient(circle at top right, rgba(255, 205, 99, 0.1), transparent 22%),
+        radial-gradient(circle at bottom center, rgba(124, 217, 255, 0.08), transparent 24%),
+        linear-gradient(180deg, #030605 0%, var(--bg) 42%, #020403 100%);
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(151, 255, 171, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(151, 255, 171, 0.05) 1px, transparent 1px);
+      background-size: 36px 36px;
+      opacity: 0.12;
+    }
+
+    .page {
+      width: min(1600px, calc(100% - 40px));
+      margin: 0 auto;
+      padding: 28px 0 56px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero {
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      background:
+        linear-gradient(180deg, rgba(10, 21, 16, 0.94), rgba(7, 15, 11, 0.9));
+      box-shadow: var(--shadow);
+      padding: 28px 28px 24px;
+      margin-bottom: 24px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      inset: auto -10% -50% 45%;
+      height: 300px;
+      background: radial-gradient(circle, rgba(151, 255, 171, 0.1), transparent 65%);
+      pointer-events: none;
+    }
+
+    .hero-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+
+    .kicker {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--font-mono);
+      font-size: 0.76rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--signal);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 8px 12px;
+      background: rgba(151, 255, 171, 0.06);
+    }
+
+    .signal-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--signal);
+      box-shadow: 0 0 10px rgba(151, 255, 171, 0.8);
+    }
+
+    .hero-title {
+      margin: 0;
+      font-family: var(--font-display);
+      font-size: clamp(3rem, 6vw, 5.6rem);
+      letter-spacing: 0.08em;
+      color: var(--signal);
+      line-height: 0.95;
+      text-shadow: 0 0 20px rgba(151, 255, 171, 0.24);
+    }
+
+    .hero-copy {
+      max-width: 980px;
+      margin: 14px 0 0;
+      font-size: 1rem;
+      line-height: 1.65;
+      color: var(--muted);
+    }
+
+    .flow-strip {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 24px;
+    }
+
+    .flow-node {
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 14px 14px 12px;
+      background: rgba(12, 23, 18, 0.78);
+      position: relative;
+      min-height: 110px;
+    }
+
+    .flow-node::after {
+      content: "->";
+      position: absolute;
+      top: 50%;
+      right: -15px;
+      transform: translateY(-50%);
+      font-family: var(--font-display);
+      font-size: 1.8rem;
+      color: var(--amber);
+      opacity: 0.75;
+    }
+
+    .flow-node:last-child::after {
+      display: none;
+    }
+
+    .flow-label {
+      display: inline-block;
+      margin-bottom: 10px;
+      font-family: var(--font-mono);
+      font-size: 0.74rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--amber);
+    }
+
+    .flow-node h2 {
+      margin: 0 0 8px;
+      font-size: 1rem;
+      color: var(--text);
+    }
+
+    .flow-node p {
+      margin: 0;
+      font-size: 0.88rem;
+      line-height: 1.45;
+      color: var(--muted);
+    }
+
+    .content-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.75fr) minmax(340px, 0.9fr);
+      gap: 24px;
+      align-items: start;
+    }
+
+    .stack {
+      display: grid;
+      gap: 24px;
+    }
+
+    .section-card {
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      background:
+        linear-gradient(180deg, rgba(10, 21, 16, 0.94), rgba(7, 14, 11, 0.92));
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 20px;
+      padding: 24px 24px 18px;
+      border-bottom: 1px solid rgba(124, 160, 134, 0.2);
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .section-tag {
+      display: inline-flex;
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      border-radius: 999px;
+      padding: 7px 10px;
+      border: 1px solid currentColor;
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .tag-unstructured {
+      color: var(--red);
+    }
+
+    .tag-structured {
+      color: var(--cyan);
+    }
+
+    .tag-analyzed {
+      color: var(--signal);
+    }
+
+    .section-header h2 {
+      margin: 12px 0 8px;
+      font-size: 1.8rem;
+      line-height: 1.1;
+    }
+
+    .section-header p {
+      margin: 0;
+      max-width: 720px;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    .section-body {
+      padding: 24px;
+      display: grid;
+      gap: 16px;
+    }
+
+    .cluster-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .cluster {
+      border: 1px solid rgba(124, 160, 134, 0.24);
+      border-radius: 22px;
+      background: var(--panel-glass);
+      padding: 18px;
+    }
+
+    .cluster h3 {
+      margin: 0 0 14px;
+      font-family: var(--font-mono);
+      font-size: 0.88rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--amber);
+    }
+
+    .pill-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      padding: 10px 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(124, 160, 134, 0.24);
+      background: rgba(12, 24, 18, 0.88);
+      font-size: 0.86rem;
+      line-height: 1.35;
+      color: var(--text);
+    }
+
+    .path-panel {
+      border: 1px solid rgba(124, 160, 134, 0.24);
+      border-radius: 22px;
+      background: rgba(10, 20, 15, 0.76);
+      padding: 18px;
+    }
+
+    .path-panel h3 {
+      margin: 0 0 12px;
+      font-family: var(--font-mono);
+      font-size: 0.84rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--signal);
+    }
+
+    .path-rule {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.6;
+      font-size: 0.94rem;
+    }
+
+    .sidebar {
+      display: grid;
+      gap: 24px;
+      position: sticky;
+      top: 18px;
+    }
+
+    .side-card {
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      background:
+        linear-gradient(180deg, rgba(10, 21, 16, 0.95), rgba(7, 14, 11, 0.92));
+      box-shadow: var(--shadow);
+      padding: 22px;
+    }
+
+    .side-card h2 {
+      margin: 0 0 12px;
+      font-size: 1.25rem;
+    }
+
+    .side-card p {
+      margin: 0 0 16px;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    .checklist {
+      margin: 0;
+      padding-left: 18px;
+      display: grid;
+      gap: 10px;
+      color: var(--text);
+      line-height: 1.45;
+      font-size: 0.92rem;
+    }
+
+    .schema-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .schema-item {
+      border: 1px solid rgba(124, 160, 134, 0.24);
+      border-radius: 16px;
+      padding: 12px;
+      background: rgba(12, 24, 18, 0.84);
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: var(--signal);
+      line-height: 1.4;
+    }
+
+    .footer-note {
+      margin-top: 24px;
+      border: 1px solid rgba(124, 160, 134, 0.24);
+      border-radius: 24px;
+      background: rgba(10, 20, 15, 0.78);
+      padding: 20px 22px;
+      color: var(--muted);
+      line-height: 1.65;
+    }
+
+    .footer-note strong {
+      color: var(--signal);
+    }
+
+    @media (max-width: 1180px) {
+      .content-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        position: static;
+      }
+    }
+
+    @media (max-width: 900px) {
+      .flow-strip {
+        grid-template-columns: 1fr;
+      }
+
+      .flow-node::after {
+        content: "v";
+        right: auto;
+        left: 50%;
+        top: auto;
+        bottom: -20px;
+        transform: translateX(-50%);
+      }
+
+      .cluster-grid,
+      .schema-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .page {
+        width: min(100% - 20px, 1600px);
+        padding-top: 14px;
+      }
+
+      .hero,
+      .section-header,
+      .section-body,
+      .side-card {
+        padding-left: 16px;
+        padding-right: 16px;
+      }
+
+      .hero-title {
+        font-size: 2.6rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <section class="hero">
+      <div class="hero-top">
+        <div class="kicker">
+          <span class="signal-dot"></span>
+          Data Repository Concept
+        </div>
+      </div>
+
+      <h1 class="hero-title">ADM TO BATTLE RHYTHM</h1>
+      <p class="hero-copy">
+        This visualization treats the repository as a doctrinal pipeline: raw observation enters as unstructured evidence, the staff organizes it into structured operational data, and battle rhythm turns that into analyzed outputs, guidance, assessments, and orders. The design goal is lineage from source evidence to decision.
+      </p>
+
+      <div class="flow-strip" aria-label="Doctrine data flow">
+        <article class="flow-node">
+          <span class="flow-label">Start</span>
+          <h2>Army Design Methodology</h2>
+          <p>Frames the operational environment, the problem, and the initial approach.</p>
+        </article>
+        <article class="flow-node">
+          <span class="flow-label">Repository Layer 1</span>
+          <h2>Unstructured Data</h2>
+          <p>Raw reports, documents, imagery, notes, and other source evidence.</p>
+        </article>
+        <article class="flow-node">
+          <span class="flow-label">Repository Layer 2</span>
+          <h2>Structured Data</h2>
+          <p>Operational objects, geospatial layers, requirements, status fields, and battle rhythm metadata.</p>
+        </article>
+        <article class="flow-node">
+          <span class="flow-label">Repository Layer 3</span>
+          <h2>Analyzed Data</h2>
+          <p>Staff assessments, planning products, targeting outputs, and recommendations.</p>
+        </article>
+        <article class="flow-node">
+          <span class="flow-label">Finish</span>
+          <h2>Battle Rhythm Decisions</h2>
+          <p>Guidance, approvals, FRAGORDs, and synchronized action across forums.</p>
+        </article>
+      </div>
+    </section>
+
+    <div class="content-grid">
+      <div class="stack">
+        <section class="section-card">
+          <div class="section-header">
+            <div>
+              <span class="section-tag tag-unstructured">Unstructured Data</span>
+              <h2>Raw Evidence Layer</h2>
+              <p>
+                Everything observed or received before it has been normalized into a common operational data model. This is the repository’s intake layer and should preserve original context, source provenance, and time.
+              </p>
+            </div>
+          </div>
+          <div class="section-body">
+            <div class="cluster-grid">
+              <article class="cluster">
+                <h3>Higher Headquarters Products</h3>
+                <div class="pill-list">
+                  <span class="pill">OPLANs</span>
+                  <span class="pill">OPORDs</span>
+                  <span class="pill">WARNORDs</span>
+                  <span class="pill">FRAGORDs</span>
+                  <span class="pill">Annexes and appendixes</span>
+                  <span class="pill">SOPs</span>
+                  <span class="pill">Policy memos</span>
+                  <span class="pill">Liaison handbooks</span>
+                  <span class="pill">Foreign disclosure guidance</span>
+                </div>
+              </article>
+
+              <article class="cluster">
+                <h3>Raw Reporting</h3>
+                <div class="pill-list">
+                  <span class="pill">SPOTREPs</span>
+                  <span class="pill">SALUTE-style reports</span>
+                  <span class="pill">Patrol reports</span>
+                  <span class="pill">Route and bridge reports</span>
+                  <span class="pill">Casualty narratives</span>
+                  <span class="pill">CBRN reports</span>
+                  <span class="pill">Intel summaries</span>
+                  <span class="pill">RFIs and RRIs</span>
+                  <span class="pill">Cyber incident reports</span>
+                  <span class="pill">EW reports</span>
+                  <span class="pill">Logistics narratives</span>
+                  <span class="pill">Medical narratives</span>
+                  <span class="pill">Police reports</span>
+                </div>
+              </article>
+
+              <article class="cluster">
+                <h3>Collection and Source Material</h3>
+                <div class="pill-list">
+                  <span class="pill">Imagery</span>
+                  <span class="pill">Full-motion video</span>
+                  <span class="pill">Maps and overlays</span>
+                  <span class="pill">Scanned products</span>
+                  <span class="pill">Screenshots</span>
+                  <span class="pill">Terrain studies</span>
+                  <span class="pill">Social media captures</span>
+                  <span class="pill">Raw sensor output</span>
+                  <span class="pill">Partner reporting</span>
+                  <span class="pill">Liaison notes</span>
+                </div>
+              </article>
+
+              <article class="cluster">
+                <h3>Human Collaboration Artifacts</h3>
+                <div class="pill-list">
+                  <span class="pill">Meeting notes</span>
+                  <span class="pill">Whiteboards</span>
+                  <span class="pill">Chat logs</span>
+                  <span class="pill">Commander notes</span>
+                  <span class="pill">Rehearsal notes</span>
+                  <span class="pill">AARs</span>
+                  <span class="pill">Lessons learned</span>
+                  <span class="pill">Decision papers</span>
+                  <span class="pill">Briefing decks</span>
+                </div>
+              </article>
+            </div>
+
+            <div class="path-panel">
+              <h3>Repository Rule</h3>
+              <p class="path-rule">
+                Preserve the original artifact, source, timestamp, classification handling, and link to the battle rhythm event or staff function that first used it.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <section class="section-card">
+          <div class="section-header">
+            <div>
+              <span class="section-tag tag-structured">Structured Data</span>
+              <h2>Machine-Readable Operational Picture</h2>
+              <p>
+                This is the repository layer that the staff can sort, fuse, filter, and query. It should be built as reusable operational objects tied to places, units, requirements, decisions, and time.
+              </p>
+            </div>
+          </div>
+          <div class="section-body">
+            <div class="cluster-grid">
+              <article class="cluster">
+                <h3>Mission and Organization Master Data</h3>
+                <div class="pill-list">
+                  <span class="pill">Unit hierarchy</span>
+                  <span class="pill">Task organization</span>
+                  <span class="pill">Command and support relationships</span>
+                  <span class="pill">Personnel rosters</span>
+                  <span class="pill">Asset rosters</span>
+                  <span class="pill">Capability inventories</span>
+                  <span class="pill">Supported and supporting links</span>
+                </div>
+              </article>
+
+              <article class="cluster">
+                <h3>Operational Environment Data</h3>
+                <div class="pill-list">
+                  <span class="pill">PMESII-PT variables</span>
+                  <span class="pill">METT-TC(I) variables</span>
+                  <span class="pill">Actors and organizations</span>
+                  <span class="pill">Infrastructure</span>
+                  <span class="pill">Weather and light</span>
+                  <span class="pill">Civil factors</span>
+                  <span class="pill">Terrain, routes, choke points</span>
+                  <span class="pill">Cyber and EW relevant terrain</span>
+                </div>
+              </article>
+
+              <article class="cluster">
+                <h3>Control Measures and Geospatial Objects</h3>
+                <div class="pill-list">
+                  <span class="pill">AO / AI / AOI</span>
+                  <span class="pill">Boundaries</span>
+                  <span class="pill">Phase lines</span>
+                  <span class="pill">Routes</span>
+                  <span class="pill">NAIs and TAIs</span>
+                  <span class="pill">Critical and defended assets</span>
+                  <span class="pill">Named locations</span>
+                  <span class="pill">COP and CIP layers</span>
+                </div>
+              </article>
+
+              <article class="cluster">
+                <h3>Requirements, Collection, and Decisions</h3>
+                <div class="pill-list">
+                  <span class="pill">CCIRs</span>
+                  <span class="pill">PIRs</span>
+                  <span class="pill">FFIRs</span>
+                  <span class="pill">EEFIs</span>
+                  <span class="pill">RFIs</span>
+                  <span class="pill">Indicators</span>
+                  <span class="pill">Collection tasks</span>
+                  <span class="pill">Asset assignments and availability</span>
+                  <span class="pill">Decision points</span>
+                  <span class="pill">Decision support matrix entries</span>
+                  <span class="pill">HOPE timeline data</span>
+                </div>
+              </article>
+
+              <article class="cluster">
+                <h3>Battle Rhythm and Targeting Data</h3>
+                <div class="pill-list">
+                  <span class="pill">Working groups</span>
+                  <span class="pill">Boards</span>
+                  <span class="pill">Briefings</span>
+                  <span class="pill">Purpose, frequency, chair, participants</span>
+                  <span class="pill">Required inputs and outputs</span>
+                  <span class="pill">Suspenses and due-outs</span>
+                  <span class="pill">HVTL / HPTL</span>
+                  <span class="pill">Target nominations</span>
+                  <span class="pill">TSS</span>
+                  <span class="pill">AGM</span>
+                  <span class="pill">Targeting synchronization matrix</span>
+                  <span class="pill">No-strike lists</span>
+                  <span class="pill">Restricted target lists</span>
+                  <span class="pill">BDA records</span>
+                </div>
+              </article>
+
+              <article class="cluster">
+                <h3>Status and Reporting Data</h3>
+                <div class="pill-list">
+                  <span class="pill">LOGSTAT</span>
+                  <span class="pill">PERSTAT</span>
+                  <span class="pill">SITREP / OPREP</span>
+                  <span class="pill">Equipment status</span>
+                  <span class="pill">Ammo status</span>
+                  <span class="pill">Casualty status</span>
+                  <span class="pill">Maintenance status</span>
+                  <span class="pill">Route and mobility status</span>
+                </div>
+              </article>
+            </div>
+
+            <div class="path-panel">
+              <h3>Repository Rule</h3>
+              <p class="path-rule">
+                Every structured record should answer who, what, where, when, status, relationship, and source. This is the layer that feeds staff running estimates and battle rhythm event inputs.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <section class="section-card">
+          <div class="section-header">
+            <div>
+              <span class="section-tag tag-analyzed">Analyzed Data</span>
+              <h2>Decision-Support Layer</h2>
+              <p>
+                This is where the staff’s processing shows up as assessment, recommendation, approval, or guidance. It is what battle rhythm consumes and produces every cycle.
+              </p>
+            </div>
+          </div>
+          <div class="section-body">
+            <div class="cluster-grid">
+              <article class="cluster">
+                <h3>ADM Products</h3>
+                <div class="pill-list">
+                  <span class="pill">OE frame</span>
+                  <span class="pill">Current and desired state narratives</span>
+                  <span class="pill">Problem statement</span>
+                  <span class="pill">Operational approach</span>
+                  <span class="pill">Broad concept sketch</span>
+                  <span class="pill">Draft mission statement</span>
+                  <span class="pill">Draft commander&apos;s intent</span>
+                  <span class="pill">Initial decision points</span>
+                  <span class="pill">Initial CCIRs</span>
+                  <span class="pill">Initial planning guidance</span>
+                  <span class="pill">Branches and sequels</span>
+                </div>
+              </article>
+
+              <article class="cluster">
+                <h3>IPOE and Intelligence Products</h3>
+                <div class="pill-list">
+                  <span class="pill">Threat models</span>
+                  <span class="pill">Event templates</span>
+                  <span class="pill">Situation templates</span>
+                  <span class="pill">Enemy COAs</span>
+                  <span class="pill">Indicators and warnings</span>
+                  <span class="pill">Collection gaps</span>
+                  <span class="pill">Intelligence estimates</span>
+                  <span class="pill">Common intelligence picture products</span>
+                </div>
+              </article>
+
+              <article class="cluster">
+                <h3>MDMP Products</h3>
+                <div class="pill-list">
+                  <span class="pill">Restated mission</span>
+                  <span class="pill">Constraints and assumptions</span>
+                  <span class="pill">COAs</span>
+                  <span class="pill">War-game results</span>
+                  <span class="pill">Comparison matrices</span>
+                  <span class="pill">Approved COA</span>
+                  <span class="pill">Decision support matrix</span>
+                  <span class="pill">Annexes and appendixes</span>
+                </div>
+              </article>
+
+              <article class="cluster">
+                <h3>Battle Rhythm Outputs</h3>
+                <div class="pill-list">
+                  <span class="pill">Battle update outputs</span>
+                  <span class="pill">Commander&apos;s update outputs</span>
+                  <span class="pill">Operations synchronization outputs</span>
+                  <span class="pill">Assessment working group outputs</span>
+                  <span class="pill">Operations assessment board outputs</span>
+                  <span class="pill">Plans synchronization outputs</span>
+                  <span class="pill">Sustainment and protection outputs</span>
+                  <span class="pill">IO and CEMA outputs</span>
+                  <span class="pill">Information collection outputs</span>
+                  <span class="pill">Approved targeting board outputs</span>
+                  <span class="pill">Commander&apos;s guidance</span>
+                  <span class="pill">FRAGORD recommendations</span>
+                  <span class="pill">Issued FRAGORDs</span>
+                </div>
+              </article>
+
+              <article class="cluster">
+                <h3>Assessment and Learning</h3>
+                <div class="pill-list">
+                  <span class="pill">Operational assessments</span>
+                  <span class="pill">Combat assessments</span>
+                  <span class="pill">BDA</span>
+                  <span class="pill">Functional damage assessment</span>
+                  <span class="pill">Trend analysis</span>
+                  <span class="pill">Measures and indicators results</span>
+                  <span class="pill">Updated recommendations</span>
+                  <span class="pill">AAR conclusions</span>
+                  <span class="pill">Lessons learned</span>
+                </div>
+              </article>
+
+              <article class="cluster">
+                <h3>Decision Value</h3>
+                <div class="pill-list">
+                  <span class="pill">What changed</span>
+                  <span class="pill">Why it matters</span>
+                  <span class="pill">What decision is needed</span>
+                  <span class="pill">What source data supports it</span>
+                </div>
+              </article>
+            </div>
+
+            <div class="path-panel">
+              <h3>Repository Rule</h3>
+              <p class="path-rule">
+                Every analyzed product should link backward to the structured operational records and raw evidence that produced it, and forward to the battle rhythm event, decision, or order it informed.
+              </p>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <aside class="sidebar">
+        <section class="side-card">
+          <h2>Battle Rhythm Minimum Feed</h2>
+          <p>
+            If the repository is supporting current operations, this is the recurring baseline data feed battle rhythm needs every cycle.
+          </p>
+          <ul class="checklist">
+            <li>Running estimates</li>
+            <li>Updated situation template</li>
+            <li>Updated operational graphics and friendly locations</li>
+            <li>Significant activities in the last 24 hours</li>
+            <li>CCIR status</li>
+            <li>Decision support matrix</li>
+            <li>Collection plan and collection priorities</li>
+            <li>Target nominations</li>
+            <li>Previous-cycle BDA</li>
+            <li>Current HPTL / AGM / TSS</li>
+            <li>Protection, sustainment, IO, and CEMA assessments</li>
+            <li>Subordinate commander updates</li>
+          </ul>
+        </section>
+
+        <section class="side-card">
+          <h2>Minimum Schema</h2>
+          <p>
+            A practical core schema that preserves lineage from raw evidence to decision.
+          </p>
+          <div class="schema-grid">
+            <div class="schema-item">Mission</div>
+            <div class="schema-item">Unit</div>
+            <div class="schema-item">Area</div>
+            <div class="schema-item">Requirement</div>
+            <div class="schema-item">Collection Event</div>
+            <div class="schema-item">Report</div>
+            <div class="schema-item">Product</div>
+            <div class="schema-item">Target</div>
+            <div class="schema-item">Battle Rhythm Event</div>
+            <div class="schema-item">Decision</div>
+            <div class="schema-item">Assessment</div>
+            <div class="schema-item">Action Item</div>
+          </div>
+        </section>
+
+        <section class="side-card">
+          <h2>Best Practical Rule</h2>
+          <p>
+            Use the doctrine-aligned split:
+          </p>
+          <ul class="checklist">
+            <li><strong>Unstructured</strong> = what was observed or received.</li>
+            <li><strong>Structured</strong> = what the staff organized into a common operational data model.</li>
+            <li><strong>Analyzed</strong> = what the staff assessed, recommended, approved, or decided.</li>
+          </ul>
+        </section>
+      </aside>
+    </div>
+
+    <section class="footer-note">
+      <strong>Design intent:</strong>
+      the repository should not just store files. It should let every commander&apos;s update, targeting board, assessment board, and working group answer the same four questions: what changed, why it matters, what decision is needed, and what source data supports that decision.
+    </section>
+  </main>
+</body>
+</html>

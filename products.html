@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Master Product Catalog</title>
+  <style>
+    @font-face {
+      font-family: "Geist";
+      font-style: normal;
+      font-weight: 100 900;
+      font-display: swap;
+      src: url("https://www.pizzint.watch/_next/static/media/4cf2300e9c8272f7-s.p.woff2") format("woff2");
+    }
+
+    @font-face {
+      font-family: "Geist Mono";
+      font-style: normal;
+      font-weight: 100 900;
+      font-display: swap;
+      src: url("https://www.pizzint.watch/_next/static/media/93f479601ee12b01-s.p.woff2") format("woff2");
+    }
+
+    @font-face {
+      font-family: "VT323";
+      font-style: normal;
+      font-weight: 400;
+      font-display: swap;
+      src: url("https://www.pizzint.watch/_next/static/media/b7bd7951037de757-s.p.woff2") format("woff2");
+    }
+
+    :root {
+      --bg: #040806;
+      --panel: rgba(10, 20, 15, 0.92);
+      --panel-soft: rgba(15, 28, 21, 0.78);
+      --line: rgba(122, 162, 131, 0.28);
+      --signal: #95ffac;
+      --amber: #ffd166;
+      --cyan: #84ddff;
+      --text: #dbe8df;
+      --muted: #98ab9f;
+      --font-sans: "Geist", Arial, Helvetica, sans-serif;
+      --font-mono: "Geist Mono", "Courier New", monospace;
+      --font-display: "VT323", "Geist Mono", monospace;
+      --shadow: 0 24px 48px rgba(0, 0, 0, 0.34);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: var(--font-sans);
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(149, 255, 172, 0.1), transparent 24%),
+        radial-gradient(circle at top right, rgba(255, 209, 102, 0.08), transparent 20%),
+        linear-gradient(180deg, #020504 0%, var(--bg) 50%, #020403 100%);
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(149, 255, 172, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(149, 255, 172, 0.05) 1px, transparent 1px);
+      background-size: 34px 34px;
+      opacity: 0.1;
+    }
+
+    .page {
+      width: min(1500px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 24px 0 48px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero {
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      background: linear-gradient(180deg, rgba(10, 20, 15, 0.96), rgba(7, 14, 11, 0.92));
+      box-shadow: var(--shadow);
+      padding: 26px 26px 22px;
+      margin-bottom: 22px;
+    }
+
+    .kicker {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 7px 12px;
+      background: rgba(149, 255, 172, 0.06);
+      color: var(--signal);
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--signal);
+      box-shadow: 0 0 10px rgba(149, 255, 172, 0.7);
+    }
+
+    h1 {
+      margin: 16px 0 8px;
+      font-family: var(--font-display);
+      font-size: clamp(3rem, 6vw, 5.3rem);
+      line-height: 0.95;
+      letter-spacing: 0.08em;
+      color: var(--signal);
+      text-shadow: 0 0 18px rgba(149, 255, 172, 0.22);
+    }
+
+    .hero p {
+      margin: 0;
+      max-width: 980px;
+      color: var(--muted);
+      line-height: 1.65;
+      font-size: 1rem;
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 22px;
+    }
+
+    .summary-card {
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      background: rgba(13, 24, 19, 0.84);
+      padding: 16px;
+    }
+
+    .summary-card span {
+      display: block;
+      color: var(--amber);
+      font-family: var(--font-mono);
+      font-size: 0.74rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .summary-card strong {
+      display: block;
+      font-size: 1.9rem;
+      color: var(--text);
+    }
+
+    .summary-card p {
+      margin-top: 6px;
+      font-size: 0.88rem;
+      color: var(--muted);
+      line-height: 1.45;
+    }
+
+    .catalog {
+      display: grid;
+      gap: 18px;
+    }
+
+    .section {
+      border: 1px solid var(--line);
+      border-radius: 26px;
+      background: linear-gradient(180deg, rgba(10, 20, 15, 0.95), rgba(7, 14, 11, 0.9));
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .section-header {
+      padding: 20px 22px 16px;
+      border-bottom: 1px solid rgba(122, 162, 131, 0.18);
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .section-header h2 {
+      margin: 0 0 8px;
+      font-size: 1.5rem;
+    }
+
+    .section-header p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      padding: 18px 22px 22px;
+    }
+
+    .product-card {
+      border: 1px solid rgba(122, 162, 131, 0.22);
+      border-radius: 18px;
+      background: var(--panel-soft);
+      padding: 16px;
+      min-height: 126px;
+    }
+
+    .product-card h3 {
+      margin: 0 0 10px;
+      font-size: 1rem;
+      line-height: 1.35;
+      color: var(--text);
+    }
+
+    .badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .badge {
+      display: inline-flex;
+      padding: 6px 8px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      letter-spacing: 0.06em;
+      color: var(--cyan);
+      background: rgba(132, 221, 255, 0.06);
+      text-transform: uppercase;
+    }
+
+    .product-card p {
+      margin: 0;
+      font-size: 0.88rem;
+      line-height: 1.5;
+      color: var(--muted);
+    }
+
+    .footer-note {
+      margin-top: 20px;
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      background: rgba(10, 20, 15, 0.82);
+      padding: 18px 20px;
+      color: var(--muted);
+      line-height: 1.65;
+    }
+
+    .footer-note strong {
+      color: var(--signal);
+    }
+
+    @media (max-width: 1100px) {
+      .summary-grid,
+      .product-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (max-width: 760px) {
+      .summary-grid,
+      .product-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .page {
+        width: min(100% - 18px, 1500px);
+        padding-top: 12px;
+      }
+
+      .hero,
+      .section-header,
+      .product-grid {
+        padding-left: 14px;
+        padding-right: 14px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <section class="hero">
+      <div class="kicker">
+        <span class="dot"></span>
+        Master Product Catalog
+      </div>
+      <h1>PRODUCTS</h1>
+      <p>
+        This page is the deduplicated master product catalog pulled from the current process model across ADM, MDMP, BR, RDSP, Fires Process, and EFDI. Each product is shown once, with the process families that generate it.
+      </p>
+
+      <div class="summary-grid">
+        <article class="summary-card">
+          <span>Catalog Type</span>
+          <strong>Deduplicated</strong>
+          <p>Products are merged into one catalog instead of repeated by every process step.</p>
+        </article>
+        <article class="summary-card">
+          <span>Source Families</span>
+          <strong>6</strong>
+          <p>ADM, MDMP, BR, RDSP, Fires Process, and EFDI.</p>
+        </article>
+        <article class="summary-card">
+          <span>Focus</span>
+          <strong>Outputs</strong>
+          <p>Only items currently modeled as products or outputs in the process pages.</p>
+        </article>
+        <article class="summary-card">
+          <span>Use Case</span>
+          <strong>Repository Design</strong>
+          <p>Useful for product lineage, schema planning, and repository taxonomies.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="catalog">
+      <article class="section">
+        <div class="section-header">
+          <h2>Design and Understanding Products</h2>
+          <p>Conceptual products that frame the operational environment, define the problem, and establish the first planning logic.</p>
+        </div>
+        <div class="product-grid">
+          <div class="product-card">
+            <h3>Environmental frame</h3>
+            <div class="badges"><span class="badge">ADM</span></div>
+            <p>Conceptual product describing the operational environment and its major dynamics.</p>
+          </div>
+          <div class="product-card">
+            <h3>Problem frame</h3>
+            <div class="badges"><span class="badge">ADM</span></div>
+            <p>Structured depiction of the problem, tensions, obstacles, and relationships that matter to the force.</p>
+          </div>
+          <div class="product-card">
+            <h3>Problem statement</h3>
+            <div class="badges"><span class="badge">ADM</span></div>
+            <p>Concise articulation of the central problem the force must solve.</p>
+          </div>
+          <div class="product-card">
+            <h3>Operational approach</h3>
+            <div class="badges"><span class="badge">ADM</span></div>
+            <p>The conceptual approach used to move from current conditions to desired conditions.</p>
+          </div>
+          <div class="product-card">
+            <h3>Commander&apos;s intent</h3>
+            <div class="badges"><span class="badge">ADM</span><span class="badge">MDMP</span></div>
+            <p>Initial or refined intent that gives the force purpose and broad method.</p>
+          </div>
+          <div class="product-card">
+            <h3>Planning guidance</h3>
+            <div class="badges"><span class="badge">ADM</span><span class="badge">MDMP</span><span class="badge">BR</span></div>
+            <p>Guidance that frames detailed planning and later operational refinements.</p>
+          </div>
+          <div class="product-card">
+            <h3>Narrative and visual depictions</h3>
+            <div class="badges"><span class="badge">ADM</span></div>
+            <p>Visual and narrative expressions of the environment, problem, and approach.</p>
+          </div>
+          <div class="product-card">
+            <h3>Reframed understanding</h3>
+            <div class="badges"><span class="badge">ADM</span></div>
+            <p>Updated environmental and problem understanding after reframing.</p>
+          </div>
+        </div>
+      </article>
+
+      <article class="section">
+        <div class="section-header">
+          <h2>Planning and Decision Products</h2>
+          <p>Products that carry planning logic forward, compare options, and package decisions for approval and execution.</p>
+        </div>
+        <div class="product-grid">
+          <div class="product-card">
+            <h3>Restated mission</h3>
+            <div class="badges"><span class="badge">MDMP</span></div>
+            <p>Approved mission statement produced through mission analysis.</p>
+          </div>
+          <div class="product-card">
+            <h3>Warning order</h3>
+            <div class="badges"><span class="badge">MDMP</span></div>
+            <p>Initial or follow-on warning order used to prepare subordinate units.</p>
+          </div>
+          <div class="product-card">
+            <h3>COA statements, sketches, and broad concepts</h3>
+            <div class="badges"><span class="badge">MDMP</span></div>
+            <p>Planning options generated during COA development.</p>
+          </div>
+          <div class="product-card">
+            <h3>Refined COAs</h3>
+            <div class="badges"><span class="badge">MDMP</span></div>
+            <p>Improved courses of action after war-gaming and analysis.</p>
+          </div>
+          <div class="product-card">
+            <h3>War-game results</h3>
+            <div class="badges"><span class="badge">MDMP</span></div>
+            <p>Recorded results, insights, and findings from COA analysis.</p>
+          </div>
+          <div class="product-card">
+            <h3>Decision support refinements</h3>
+            <div class="badges"><span class="badge">MDMP</span></div>
+            <p>Decision points, branches, sequels, and synchronization refinements that shape execution.</p>
+          </div>
+          <div class="product-card">
+            <h3>COA evaluation criteria and decision matrix</h3>
+            <div class="badges"><span class="badge">MDMP</span></div>
+            <p>Structured criteria and comparison products used to select a recommended COA.</p>
+          </div>
+          <div class="product-card">
+            <h3>Recommended COA</h3>
+            <div class="badges"><span class="badge">MDMP</span></div>
+            <p>Staff-recommended course of action for commander decision.</p>
+          </div>
+          <div class="product-card">
+            <h3>Approved COA</h3>
+            <div class="badges"><span class="badge">MDMP</span></div>
+            <p>Selected course of action approved for transition into order production.</p>
+          </div>
+          <div class="product-card">
+            <h3>Approved plan or order</h3>
+            <div class="badges"><span class="badge">MDMP</span></div>
+            <p>Formal plan or order prepared for dissemination and transition.</p>
+          </div>
+          <div class="product-card">
+            <h3>Transition products</h3>
+            <div class="badges"><span class="badge">MDMP</span><span class="badge">RDSP</span></div>
+            <p>Products that hand approved decisions and changes to subordinates for execution.</p>
+          </div>
+          <div class="product-card">
+            <h3>Decision recommendations</h3>
+            <div class="badges"><span class="badge">RDSP</span></div>
+            <p>Focused decision problems, COA recommendations, and approval-ready decision packages during execution.</p>
+          </div>
+        </div>
+      </article>
+
+      <article class="section">
+        <div class="section-header">
+          <h2>Command and Control Products</h2>
+          <p>Guidance, decision, and order products produced by battle rhythm and current operations.</p>
+        </div>
+        <div class="product-grid">
+          <div class="product-card">
+            <h3>Commander&apos;s guidance</h3>
+            <div class="badges"><span class="badge">BR</span><span class="badge">MDMP</span></div>
+            <p>Recurring guidance issued during briefs, boards, and planning activities.</p>
+          </div>
+          <div class="product-card">
+            <h3>Commander&apos;s decisions and guidance</h3>
+            <div class="badges"><span class="badge">BR</span></div>
+            <p>Decision outputs from update briefings and assessment forums.</p>
+          </div>
+          <div class="product-card">
+            <h3>Fragmentary order / updated instructions</h3>
+            <div class="badges"><span class="badge">BR</span><span class="badge">RDSP</span></div>
+            <p>Orders or instructions used to modify current operations.</p>
+          </div>
+          <div class="product-card">
+            <h3>Execution matrix</h3>
+            <div class="badges"><span class="badge">BR</span></div>
+            <p>Updated execution matrix used to synchronize ongoing operations.</p>
+          </div>
+          <div class="product-card">
+            <h3>Decision support matrix</h3>
+            <div class="badges"><span class="badge">MDMP</span><span class="badge">BR</span></div>
+            <p>Decision support products produced or updated for planning and execution.</p>
+          </div>
+          <div class="product-card">
+            <h3>Changes to the operation order</h3>
+            <div class="badges"><span class="badge">BR</span><span class="badge">RDSP</span></div>
+            <p>Approved or recommended changes to the current operation.</p>
+          </div>
+          <div class="product-card">
+            <h3>Shared understanding of the updated situation</h3>
+            <div class="badges"><span class="badge">RDSP</span></div>
+            <p>Common understanding output from comparing current conditions to the order.</p>
+          </div>
+          <div class="product-card">
+            <h3>Identified variance or issue</h3>
+            <div class="badges"><span class="badge">RDSP</span></div>
+            <p>Formal identification of a deviation requiring staff attention.</p>
+          </div>
+        </div>
+      </article>
+
+      <article class="section">
+        <div class="section-header">
+          <h2>Assessment and Learning Products</h2>
+          <p>Products that measure progress, capture effects, and refine future actions.</p>
+        </div>
+        <div class="product-grid">
+          <div class="product-card">
+            <h3>Assessment products and reports</h3>
+            <div class="badges"><span class="badge">BR</span></div>
+            <p>Updated assessment products, higher-headquarters reports, and staff assessment packages.</p>
+          </div>
+          <div class="product-card">
+            <h3>Assessment adjustments and recommendations</h3>
+            <div class="badges"><span class="badge">BR</span></div>
+            <p>Recommendations to adjust assessment plans, indicators, and supporting activities.</p>
+          </div>
+          <div class="product-card">
+            <h3>Protection assessment</h3>
+            <div class="badges"><span class="badge">BR</span></div>
+            <p>Updated protection assessment and related mitigation recommendations.</p>
+          </div>
+          <div class="product-card">
+            <h3>Battle damage assessment and reattack recommendations</h3>
+            <div class="badges"><span class="badge">Fires Process</span></div>
+            <p>Effects-based assessment of engagements and recommendations for follow-on action.</p>
+          </div>
+          <div class="product-card">
+            <h3>Updated running estimates</h3>
+            <div class="badges"><span class="badge">ADM</span><span class="badge">MDMP</span><span class="badge">RDSP</span></div>
+            <p>Refined staff understanding carried forward as a recurring analytical product.</p>
+          </div>
+          <div class="product-card">
+            <h3>Supportability and risk findings</h3>
+            <div class="badges"><span class="badge">RDSP</span></div>
+            <p>Validation products confirming feasibility, risk, and supportability before approval.</p>
+          </div>
+        </div>
+      </article>
+
+      <article class="section">
+        <div class="section-header">
+          <h2>Collection, Information, and Targeting Products</h2>
+          <p>Products that shape collection, inform targeting, and drive synchronized information-related activity.</p>
+        </div>
+        <div class="product-grid">
+          <div class="product-card">
+            <h3>Updated information collection plan / draft collection plan</h3>
+            <div class="badges"><span class="badge">BR</span></div>
+            <p>Collection products that prioritize assets and tasks for upcoming cycles.</p>
+          </div>
+          <div class="product-card">
+            <h3>Collection priorities and recommendations</h3>
+            <div class="badges"><span class="badge">BR</span></div>
+            <p>Collection priorities, requirements, and recommended changes to CCIRs.</p>
+          </div>
+          <div class="product-card">
+            <h3>IO synchronization products</h3>
+            <div class="badges"><span class="badge">BR</span></div>
+            <p>Updated IO schemes, IO synchronization matrices, and friction-point updates.</p>
+          </div>
+          <div class="product-card">
+            <h3>Themes, messages, and information requirements</h3>
+            <div class="badges"><span class="badge">BR</span></div>
+            <p>Refined messages, updated information requirements, and related decision-board inputs.</p>
+          </div>
+          <div class="product-card">
+            <h3>Combined information overlay</h3>
+            <div class="badges"><span class="badge">BR</span></div>
+            <p>Updated information overlay reflecting current IO-related understanding.</p>
+          </div>
+          <div class="product-card">
+            <h3>Target nominations</h3>
+            <div class="badges"><span class="badge">BR</span></div>
+            <p>Recommended, approved, or draft target nominations passed between targeting forums.</p>
+          </div>
+          <div class="product-card">
+            <h3>High-payoff target list (HPTL)</h3>
+            <div class="badges"><span class="badge">Fires Process</span><span class="badge">BR</span></div>
+            <p>Draft or approved high-payoff target list used in targeting and fires decision-making.</p>
+          </div>
+          <div class="product-card">
+            <h3>Attack guidance matrix (AGM)</h3>
+            <div class="badges"><span class="badge">Fires Process</span><span class="badge">BR</span></div>
+            <p>Draft or approved attack guidance matrix tied to targeting decisions.</p>
+          </div>
+          <div class="product-card">
+            <h3>Target selection standards (TSS)</h3>
+            <div class="badges"><span class="badge">Fires Process</span><span class="badge">BR</span></div>
+            <p>Draft or approved standards for validating and engaging targets.</p>
+          </div>
+          <div class="product-card">
+            <h3>ICSM / TSM</h3>
+            <div class="badges"><span class="badge">Fires Process</span></div>
+            <p>Intelligence collection synchronization matrix and target synchronization matrix.</p>
+          </div>
+          <div class="product-card">
+            <h3>Targeting guidance</h3>
+            <div class="badges"><span class="badge">BR</span></div>
+            <p>Approved guidance used by the force to govern targeting activity.</p>
+          </div>
+          <div class="product-card">
+            <h3>Air support requests</h3>
+            <div class="badges"><span class="badge">BR</span></div>
+            <p>Recommended air support requests flowing from targeting activities.</p>
+          </div>
+        </div>
+      </article>
+
+      <article class="section">
+        <div class="section-header">
+          <h2>Sustainment, Protection, and CEMA Products</h2>
+          <p>Products that synchronize support, protection, civil-military considerations, and cyberspace/electromagnetic activity.</p>
+        </div>
+        <div class="product-grid">
+          <div class="product-card">
+            <h3>Sustainment priorities and sustainment synchronization</h3>
+            <div class="badges"><span class="badge">BR</span></div>
+            <p>Recommended priorities of support and synchronized sustainment operations for upcoming periods.</p>
+          </div>
+          <div class="product-card">
+            <h3>Logistics synchronization matrix</h3>
+            <div class="badges"><span class="badge">BR</span></div>
+            <p>Updated logistics synchronization product used by sustainment boards.</p>
+          </div>
+          <div class="product-card">
+            <h3>Sustainment policy and priorities</h3>
+            <div class="badges"><span class="badge">BR</span></div>
+            <p>Approved sustainment policy or changes to sustainment priorities.</p>
+          </div>
+          <div class="product-card">
+            <h3>Protection guidance and mitigation measures</h3>
+            <div class="badges"><span class="badge">BR</span></div>
+            <p>Guidance and mitigation recommendations tied to protection assessments.</p>
+          </div>
+          <div class="product-card">
+            <h3>Critical and defended assets recommendations</h3>
+            <div class="badges"><span class="badge">BR</span></div>
+            <p>Recommendations for critical assets lists and defended assets lists.</p>
+          </div>
+          <div class="product-card">
+            <h3>CEMA capability and operational-change recommendations</h3>
+            <div class="badges"><span class="badge">BR</span></div>
+            <p>Requests and approvals related to CEMA capabilities and recommended changes to operations.</p>
+          </div>
+          <div class="product-card">
+            <h3>Civil-military operations products</h3>
+            <div class="badges"><span class="badge">BR</span></div>
+            <p>Updated CMO assessment, adjusted objectives, recommended tasks, and key leader engagement recommendations.</p>
+          </div>
+          <div class="product-card">
+            <h3>Airspace control products</h3>
+            <div class="badges"><span class="badge">BR</span></div>
+            <p>Completed airspace plans, appendix recommendations, and ACP or special-instruction changes.</p>
+          </div>
+          <div class="product-card">
+            <h3>KM process and battle rhythm changes</h3>
+            <div class="badges"><span class="badge">BR</span></div>
+            <p>Updates to KM SOPs, process changes, and recommended changes to the battle rhythm.</p>
+          </div>
+        </div>
+      </article>
+
+      <article class="section">
+        <div class="section-header">
+          <h2>EFDI Products</h2>
+          <p>Products modeled from the EFDI concept as a publish-once, subscribe-many sensor-to-action architecture.</p>
+        </div>
+        <div class="product-grid">
+          <div class="product-card">
+            <h3>Role-specific alert products</h3>
+            <div class="badges"><span class="badge">EFDI</span></div>
+            <p>Different alert products tailored to civil warning, air defense, intelligence, maneuver, and sustainment audiences.</p>
+          </div>
+          <div class="product-card">
+            <h3>Fused recognized event</h3>
+            <div class="badges"><span class="badge">EFDI</span></div>
+            <p>Correlated event package with classification, projected routes, likely targets, and time-to-impact estimates.</p>
+          </div>
+          <div class="product-card">
+            <h3>Actionable tactical tracks</h3>
+            <div class="badges"><span class="badge">EFDI</span></div>
+            <p>Tactical engagement tracks and command-post operational picture updates.</p>
+          </div>
+          <div class="product-card">
+            <h3>Published action status</h3>
+            <div class="badges"><span class="badge">EFDI</span></div>
+            <p>Feedback products reporting alerts sent, engagement complete, rerouting, or additional collection needed.</p>
+          </div>
+          <div class="product-card">
+            <h3>Archived event history</h3>
+            <div class="badges"><span class="badge">EFDI</span></div>
+            <p>Archived history for forensic review, retraining, trend analysis, and cross-domain release.</p>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <section class="footer-note">
+      <strong>Catalog rule:</strong> this page treats products as deduplicated outputs across all currently modeled process families. Where multiple processes create similar outputs, they are merged into one catalog item and tagged with every relevant process family.
+    </section>
+  </main>
+</body>
+</html>
