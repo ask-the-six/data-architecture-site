@@ -1,7 +1,7 @@
 (function () {
   const admModalData = {
-    "framing-an-oe": {
-      title: "Framing an OE",
+    "framing-the-operational-environment": {
+      title: "Framing the Operational Environment",
       source: "Source basis: FM 5.0, Planning and Orders Production, plus ATP 5-0.1, Army Design Methodology, chapter 3 (official Army doctrine available through RDL and Army doctrinal references). Some inputs and outputs are structured from the doctrine's narrative form.",
       rows: {
         input: [

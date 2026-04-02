@@ -114,6 +114,200 @@
       box-shadow: 0 18px 48px rgba(0, 0, 0, 0.24);
     }
 
+    .heading-inner {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+    }
+
+    .heading-patch {
+      width: clamp(78px, 8vw, 112px);
+      height: auto;
+      flex: 0 0 auto;
+      object-fit: contain;
+      filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.38));
+    }
+
+    .heading-copy {
+      flex: 1;
+      min-width: 0;
+      text-align: center;
+    }
+
+    .title-animation {
+      margin: 28px auto 0;
+      width: 100%;
+      margin-left: 0;
+      height: 58px;
+      padding: 1px 8px 0;
+      border: 1px solid rgba(116, 162, 130, 0.22);
+      border-radius: 12px;
+      background:
+        linear-gradient(180deg, rgba(7, 17, 13, 0.88), rgba(5, 12, 9, 0.78));
+      box-shadow:
+        inset 0 1px 0 rgba(140, 255, 157, 0.06),
+        0 10px 22px rgba(0, 0, 0, 0.22);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .title-animation::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(90deg, rgba(140, 255, 157, 0.04) 0, transparent 20%, transparent 80%, rgba(255, 200, 87, 0.04) 100%),
+        repeating-linear-gradient(90deg, transparent 0 29px, rgba(140, 255, 157, 0.04) 29px 30px);
+      pointer-events: none;
+    }
+
+    .title-animation-track {
+      position: relative;
+      width: 100%;
+      height: 100%;
+    }
+
+    .tank-banner-image {
+      position: absolute;
+      bottom: -8px;
+      height: 54px;
+      width: auto;
+      filter: drop-shadow(0 8px 12px rgba(0, 0, 0, 0.34));
+      user-select: none;
+      -webkit-user-drag: none;
+      pointer-events: none;
+    }
+
+    .tank-banner-image--abrams {
+      --shot-origin-left: 210px;
+      --shot-target-left: calc(50% + 28px);
+      left: -18px;
+      transform: scaleX(-1);
+      animation: abramsAdvance 12s ease-in-out infinite;
+    }
+
+    .tank-banner-image--t72 {
+      --shot-origin-right: 205px;
+      --shot-target-right: calc(50% + 74px);
+      right: -18px;
+      animation: t72Advance 12s ease-in-out infinite;
+    }
+
+    .tank-shot {
+      position: absolute;
+      width: 6px;
+      height: 6px;
+      top: 28px;
+      background: var(--signal);
+      box-shadow: 0 0 10px rgba(140, 255, 157, 0.7);
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .tank-shot--abrams {
+      left: calc(-18px + var(--shot-origin-left));
+      animation: abramsShot 12s linear infinite;
+    }
+
+    .tank-shot--t72 {
+      right: calc(-18px + var(--shot-origin-right));
+      animation: t72Shot 12s linear infinite;
+    }
+
+    @keyframes abramsAdvance {
+      0%,
+      18% {
+        left: -18px;
+        opacity: 1;
+      }
+      48%,
+      58% {
+        left: calc(50% - 240px);
+        opacity: 1;
+      }
+      60% {
+        left: calc(50% - 240px);
+        opacity: 0;
+      }
+      61% {
+        left: -18px;
+        opacity: 0;
+      }
+      64%,
+      100% {
+        left: -18px;
+        opacity: 1;
+      }
+    }
+
+    @keyframes t72Advance {
+      0%,
+      18% {
+        right: -18px;
+        opacity: 1;
+      }
+      48%,
+      58% {
+        right: calc(50% - 232px);
+        opacity: 1;
+      }
+      60% {
+        right: calc(50% - 232px);
+        opacity: 0;
+      }
+      61% {
+        right: -18px;
+        opacity: 0;
+      }
+      64%,
+      100% {
+        right: -18px;
+        opacity: 1;
+      }
+    }
+
+    @keyframes abramsShot {
+      0%,
+      17.5% {
+        left: calc(-18px + 210px);
+        opacity: 0;
+      }
+      18% {
+        left: calc(-18px + 210px);
+        opacity: 1;
+      }
+      34% {
+        left: calc(50% + 28px);
+        opacity: 1;
+      }
+      35%,
+      100% {
+        left: calc(50% + 28px);
+        opacity: 0;
+      }
+    }
+
+    @keyframes t72Shot {
+      0%,
+      17.5% {
+        right: calc(-18px + 205px);
+        opacity: 0;
+      }
+      18% {
+        right: calc(-18px + 205px);
+        opacity: 1;
+      }
+      34% {
+        right: calc(50% + 74px);
+        opacity: 1;
+      }
+      35%,
+      100% {
+        right: calc(50% + 74px);
+        opacity: 0;
+      }
+    }
+
     .heading h1 {
       margin: 0;
       font-family: var(--font-display);
@@ -776,6 +970,34 @@
         padding: 18px;
       }
 
+      .heading-inner {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .heading-patch {
+        width: 82px;
+      }
+
+      .title-animation {
+        width: 100%;
+        margin-left: 0;
+        margin-top: 18px;
+        height: 54px;
+        padding: 1px 5px 0;
+      }
+
+      .tank-banner-image {
+        height: 48px;
+        bottom: -6px;
+      }
+
+      .tank-shot {
+        width: 5px;
+        height: 5px;
+        top: 26px;
+      }
+
       thead th,
       tbody th,
       tbody td {
@@ -846,8 +1068,24 @@
 <body>
   <main class="board">
     <section class="heading">
-      <h1>USAREUR-AF Data Architecture Matrix</h1>
-      <p>Five layers mapped across five doctrinal processes.</p>
+      <div class="heading-inner">
+        <img
+          class="heading-patch"
+          src="assets/usareur-af-patch.svg"
+          alt="USAREUR-AF patch"
+        >
+        <div class="heading-copy">
+          <h1>USAREUR-AF Data Architecture Matrix</h1>
+          <div class="title-animation" aria-label="Animated tanks approaching from both sides and meeting in the center">
+            <div class="title-animation-track" aria-hidden="true">
+              <img class="tank-banner-image tank-banner-image--abrams" src="assets/te-m1a2-abrams.png" alt="">
+              <img class="tank-banner-image tank-banner-image--t72" src="assets/te-t72b.png" alt="">
+              <div class="tank-shot tank-shot--abrams"></div>
+              <div class="tank-shot tank-shot--t72"></div>
+            </div>
+          </div>
+        </div>
+      </div>
     </section>
 
     <div class="matrix-wrap">
@@ -867,8 +1105,8 @@
             <th scope="row">Data Decisions</th>
             <td>
               <div class="adm-subtiles">
-                <section class="subtile" aria-label="ADM subtile Framing an OE">
-                  <h2>Framing an OE</h2>
+                <section class="subtile" aria-label="ADM subtile Framing the Operational Environment">
+                  <h2>Framing the Operational Environment</h2>
                   <div class="subtile-grid">
                     <div class="subtile-item">Input</div>
                     <div class="subtile-item">Process</div>
@@ -987,6 +1225,38 @@
                     <div class="subtile-item">Output</div>
                   </div>
                 </section>
+                <section class="subtile" aria-label="BR subtile Operations Assessment Board">
+                  <h2>Operations Assessment Board</h2>
+                  <div class="subtile-grid">
+                    <div class="subtile-item">Input</div>
+                    <div class="subtile-item">Process</div>
+                    <div class="subtile-item">Output</div>
+                  </div>
+                </section>
+                <section class="subtile" aria-label="BR subtile Plans Synchronization Board">
+                  <h2>Plans Synchronization Board</h2>
+                  <div class="subtile-grid">
+                    <div class="subtile-item">Input</div>
+                    <div class="subtile-item">Process</div>
+                    <div class="subtile-item">Output</div>
+                  </div>
+                </section>
+                <section class="subtile" aria-label="BR subtile Sustainment Board">
+                  <h2>Sustainment Board</h2>
+                  <div class="subtile-grid">
+                    <div class="subtile-item">Input</div>
+                    <div class="subtile-item">Process</div>
+                    <div class="subtile-item">Output</div>
+                  </div>
+                </section>
+                <section class="subtile" aria-label="BR subtile Targeting Board">
+                  <h2>Targeting Board</h2>
+                  <div class="subtile-grid">
+                    <div class="subtile-item">Input</div>
+                    <div class="subtile-item">Process</div>
+                    <div class="subtile-item">Output</div>
+                  </div>
+                </section>
                 <section class="subtile" aria-label="BR subtile Assessment Running Estimate">
                   <h2>Assessment Running Estimate</h2>
                   <div class="subtile-grid">
@@ -1067,38 +1337,6 @@
                     <div class="subtile-item">Output</div>
                   </div>
                 </section>
-                <section class="subtile" aria-label="BR subtile Operations Assessment Board">
-                  <h2>Operations Assessment Board</h2>
-                  <div class="subtile-grid">
-                    <div class="subtile-item">Input</div>
-                    <div class="subtile-item">Process</div>
-                    <div class="subtile-item">Output</div>
-                  </div>
-                </section>
-                <section class="subtile" aria-label="BR subtile Plans Synchronization Board">
-                  <h2>Plans Synchronization Board</h2>
-                  <div class="subtile-grid">
-                    <div class="subtile-item">Input</div>
-                    <div class="subtile-item">Process</div>
-                    <div class="subtile-item">Output</div>
-                  </div>
-                </section>
-                <section class="subtile" aria-label="BR subtile Sustainment Board">
-                  <h2>Sustainment Board</h2>
-                  <div class="subtile-grid">
-                    <div class="subtile-item">Input</div>
-                    <div class="subtile-item">Process</div>
-                    <div class="subtile-item">Output</div>
-                  </div>
-                </section>
-                <section class="subtile" aria-label="BR subtile Targeting Board">
-                  <h2>Targeting Board</h2>
-                  <div class="subtile-grid">
-                    <div class="subtile-item">Input</div>
-                    <div class="subtile-item">Process</div>
-                    <div class="subtile-item">Output</div>
-                  </div>
-                </section>
               </div>
             </td>
             <td>
@@ -1157,6 +1395,14 @@
                 </section>
                 <section class="subtile" aria-label="Operations Processes subtile EFDI">
                   <h2>EFDI</h2>
+                  <div class="subtile-grid">
+                    <div class="subtile-item">Input</div>
+                    <div class="subtile-item">Process</div>
+                    <div class="subtile-item">Output</div>
+                  </div>
+                </section>
+                <section class="subtile" aria-label="Operations Processes subtile Running Estimates">
+                  <h2>Running Estimates</h2>
                   <div class="subtile-grid">
                     <div class="subtile-item">Input</div>
                     <div class="subtile-item">Process</div>

@@ -53,6 +53,34 @@
           "Archived event history for forensic review, retraining, trend analysis, and cross-domain dissemination"
         ]
       }
+    },
+    "running-estimates": {
+      title: "Running Estimates",
+      subtitle: "Running estimates are modeled here as a continuously updated staff assessment product. The rows below synthesize FM 5-0 and FM 6-0 doctrine with recent Army lessons-learned emphasis on conclusions, recommendations, associated risk, and opportunities.",
+      source: "Source basis: FM 5-0, Planning and Orders Production (16 May 2022), especially appendix C and the running-estimate considerations derived from mission analysis; FM 6-0, Commander and Staff Organization and Operations (16 May 2022), especially its guidance on building and maintaining running estimates to support decisions, the COP, and command-post operations; and CALL No. 24-894, Staff Processes in LSCO Pt. 2: Running Estimates (August 2024). The Input/Process/Output rows here are a doctrine-based synthesis rather than a direct single-table extract.",
+      rows: {
+        input: [
+          "Facts and assumptions derived from mission analysis and current operations",
+          "Friendly force status, to include location, activity, combat power, readiness, and available support",
+          "Enemy activities, capabilities, and likely actions affecting the functional area",
+          "Civil considerations and partner conditions affecting current and future operations",
+          "Latest subordinate, adjacent, and higher headquarters reporting, including CCIR- and EEFI-relevant information"
+        ],
+        process: [
+          "Continuously build, revise, update, and maintain the estimate as new information arrives",
+          "Analyze the situation by functional area, comparing mission requirements to available capabilities",
+          "Assess whether current operations are on plan and whether future operations remain supportable",
+          "Turn raw data into conclusions, recommendations, associated risk, and opportunities for exploitation",
+          "Keep the estimate accessible across the staff and battle rhythm so it can inform decisions at any time"
+        ],
+        output: [
+          "A current functional-area assessment of supportability for ongoing and planned operations",
+          "Conclusions and recommendations for anticipated commander decisions",
+          "Prioritized issues, deficiencies, risks, and proposed mitigation measures",
+          "Refined shared understanding and a better-informed common operational picture",
+          "Inputs to battle rhythm events, plans, orders, annexes, and fragmentary order adjustments"
+        ]
+      }
     }
   };
 
