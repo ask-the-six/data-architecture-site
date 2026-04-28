@@ -1,5 +1,7 @@
 (function () {
-  const admModalData = {
+  const subtitleDefault = "ADM content is organized from FM 5.0 and Army design doctrine, then expressed in the same five-layer matrix with the conceptual content aligned in the Data Decisions column.";
+
+  const entries = {
     "framing-the-operational-environment": {
       title: "Framing the Operational Environment",
       source: "Source basis: FM 5.0, Planning and Orders Production, plus ATP 5-0.1, Army Design Methodology, chapter 3 (official Army doctrine available through RDL and Army doctrinal references). Some inputs and outputs are structured from the doctrine's narrative form.",
@@ -115,122 +117,5 @@
     }
   };
 
-  window.admModalData = admModalData;
-
-  const subtitleDefault = "ADM content is organized from FM 5.0 and Army design doctrine, then expressed in the same five-layer matrix with the conceptual content aligned in the Data Decisions column.";
-
-  const modal = document.getElementById("adm-detail-modal");
-  const modalTitle = document.getElementById("adm-detail-modal-title");
-  const modalSubtitle = document.getElementById("adm-detail-modal-subtitle");
-  const modalGrid = document.getElementById("adm-detail-modal-grid");
-  const modalSource = document.getElementById("adm-detail-modal-source");
-  const modalClose = modal.querySelector(".modal-close");
-
-  function escapeHtml(value) {
-    return value
-      .replaceAll("&", "&amp;")
-      .replaceAll("<", "&lt;")
-      .replaceAll(">", "&gt;")
-      .replaceAll('"', "&quot;")
-      .replaceAll("'", "&#39;");
-  }
-
-  function buildDecisionBar(text, title, label) {
-    return `
-      <div
-        class="modal-sub-block modal-row-span modal-sub-block--interactive"
-        data-detail-modal="nested-row-detail-modal"
-        data-detail-title="${escapeHtml(text)}"
-        data-detail-phase="${escapeHtml(label)}"
-        data-detail-parent="${escapeHtml(title)}"
-        role="button"
-        tabindex="0"
-      >
-        <div class="modal-sub-block-cell">Placeholder</div>
-        <div class="modal-sub-block-cell">Placeholder</div>
-        <div class="modal-sub-block-cell">Placeholder</div>
-        <div class="modal-sub-block-cell">Placeholder</div>
-        <div class="modal-sub-block-anchor">${escapeHtml(text)}</div>
-      </div>
-    `;
-  }
-
-  function buildRow(label, items, title) {
-    const rowContent = items && items.length
-      ? items.map((item) => buildDecisionBar(item, title, label)).join("")
-      : `
-        <div class="modal-layer-cell"></div>
-        <div class="modal-layer-cell"></div>
-        <div class="modal-layer-cell"></div>
-        <div class="modal-layer-cell"></div>
-        <div class="modal-layer-cell"></div>
-      `;
-
-    return `
-      <section class="modal-column" aria-label="${escapeHtml(title)} ${escapeHtml(label.toLowerCase())}">
-        <h3>${escapeHtml(label)}</h3>
-        <div class="modal-row-grid">
-          ${rowContent}
-        </div>
-      </section>
-    `;
-  }
-
-  function openModal(entry) {
-    modalTitle.textContent = entry.title;
-    modalSubtitle.textContent = subtitleDefault;
-    modalGrid.innerHTML = [
-      buildRow("Input", entry.rows.input, entry.title),
-      buildRow("Process", entry.rows.process, entry.title),
-      buildRow("Output", entry.rows.output, entry.title)
-    ].join("");
-    modalSource.textContent = entry.source;
-    modal.classList.add("is-open");
-    modal.setAttribute("aria-hidden", "false");
-  }
-
-  function closeModal() {
-    modal.classList.remove("is-open");
-    modal.setAttribute("aria-hidden", "true");
-  }
-
-  document.querySelectorAll(".adm-subtiles .subtile").forEach((tile) => {
-    const title = tile.querySelector("h2")?.textContent.trim() || "";
-    const key = title
-      .toLowerCase()
-      .replaceAll("&", "and")
-      .replaceAll("/", " ")
-      .replaceAll("'", "")
-      .replace(/[^a-z0-9]+/g, "-")
-      .replace(/^-+|-+$/g, "");
-
-    if (!admModalData[key]) {
-      return;
-    }
-
-    tile.classList.add("subtile--interactive");
-    tile.setAttribute("tabindex", "0");
-    tile.setAttribute("role", "button");
-
-    tile.addEventListener("click", () => openModal(admModalData[key]));
-    tile.addEventListener("keydown", (event) => {
-      if (event.key === "Enter" || event.key === " ") {
-        event.preventDefault();
-        openModal(admModalData[key]);
-      }
-    });
-  });
-
-  modalClose.addEventListener("click", closeModal);
-  modal.addEventListener("click", (event) => {
-    if (event.target === modal) {
-      closeModal();
-    }
-  });
-
-  document.addEventListener("keydown", (event) => {
-    if (event.key === "Escape" && modal.classList.contains("is-open")) {
-      closeModal();
-    }
-  });
+  window.ModalUtils.registerData('adm', { subtitleDefault, entries });
 })();

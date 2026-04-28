@@ -1,5 +1,7 @@
 (function () {
-  const mdmpModalData = {
+  const subtitleDefault = "Inputs, process, and outputs are aligned to the FM 5.0 MDMP step graphics and expressed in the same five-layer matrix, with doctrinal content aligned in the Data Decisions column.";
+
+  const entries = {
     "receipt-of-mission": {
       title: "Receipt of Mission",
       source: "Source basis: FM 5.0, Planning and Orders Production (2022), MDMP step graphics; supplemented by the official Army CALL MDMP guide that cites FM 5.0 figures: https://api.army.mil/e2/c/downloads/2023/11/17/f7177a3c/23-07-594-military-decision-making-process-nov-23-public.pdf",
@@ -192,122 +194,5 @@
     }
   };
 
-  window.mdmpModalData = mdmpModalData;
-
-  const subtitleDefault = "Inputs, process, and outputs are aligned to the FM 5.0 MDMP step graphics and expressed in the same five-layer matrix, with doctrinal content aligned in the Data Decisions column.";
-
-  const modal = document.getElementById("mdmp-detail-modal");
-  const modalTitle = document.getElementById("mdmp-detail-modal-title");
-  const modalSubtitle = document.getElementById("mdmp-detail-modal-subtitle");
-  const modalGrid = document.getElementById("mdmp-detail-modal-grid");
-  const modalSource = document.getElementById("mdmp-detail-modal-source");
-  const modalClose = modal.querySelector(".modal-close");
-
-  function escapeHtml(value) {
-    return value
-      .replaceAll("&", "&amp;")
-      .replaceAll("<", "&lt;")
-      .replaceAll(">", "&gt;")
-      .replaceAll('"', "&quot;")
-      .replaceAll("'", "&#39;");
-  }
-
-  function buildDecisionBar(text, title, label) {
-    return `
-      <div
-        class="modal-sub-block modal-row-span modal-sub-block--interactive"
-        data-detail-modal="nested-row-detail-modal"
-        data-detail-title="${escapeHtml(text)}"
-        data-detail-phase="${escapeHtml(label)}"
-        data-detail-parent="${escapeHtml(title)}"
-        role="button"
-        tabindex="0"
-      >
-        <div class="modal-sub-block-cell">Placeholder</div>
-        <div class="modal-sub-block-cell">Placeholder</div>
-        <div class="modal-sub-block-cell">Placeholder</div>
-        <div class="modal-sub-block-cell">Placeholder</div>
-        <div class="modal-sub-block-anchor">${escapeHtml(text)}</div>
-      </div>
-    `;
-  }
-
-  function buildRow(label, items, title) {
-    const rowContent = items && items.length
-      ? items.map((item) => buildDecisionBar(item, title, label)).join("")
-      : `
-        <div class="modal-layer-cell"></div>
-        <div class="modal-layer-cell"></div>
-        <div class="modal-layer-cell"></div>
-        <div class="modal-layer-cell"></div>
-        <div class="modal-layer-cell"></div>
-      `;
-
-    return `
-      <section class="modal-column" aria-label="${escapeHtml(title)} ${escapeHtml(label.toLowerCase())}">
-        <h3>${escapeHtml(label)}</h3>
-        <div class="modal-row-grid">
-          ${rowContent}
-        </div>
-      </section>
-    `;
-  }
-
-  function openModal(entry) {
-    modalTitle.textContent = entry.title;
-    modalSubtitle.textContent = subtitleDefault;
-    modalGrid.innerHTML = [
-      buildRow("Input", entry.rows.input, entry.title),
-      buildRow("Process", entry.rows.process, entry.title),
-      buildRow("Output", entry.rows.output, entry.title)
-    ].join("");
-    modalSource.textContent = entry.source;
-    modal.classList.add("is-open");
-    modal.setAttribute("aria-hidden", "false");
-  }
-
-  function closeModal() {
-    modal.classList.remove("is-open");
-    modal.setAttribute("aria-hidden", "true");
-  }
-
-  document.querySelectorAll(".mdmp-subtiles .subtile").forEach((tile) => {
-    const title = tile.querySelector("h2")?.textContent.trim() || "";
-    const key = title
-      .toLowerCase()
-      .replaceAll("&", "and")
-      .replaceAll("/", " ")
-      .replaceAll("'", "")
-      .replace(/[^a-z0-9]+/g, "-")
-      .replace(/^-+|-+$/g, "");
-
-    if (!mdmpModalData[key]) {
-      return;
-    }
-
-    tile.classList.add("subtile--interactive");
-    tile.setAttribute("tabindex", "0");
-    tile.setAttribute("role", "button");
-
-    tile.addEventListener("click", () => openModal(mdmpModalData[key]));
-    tile.addEventListener("keydown", (event) => {
-      if (event.key === "Enter" || event.key === " ") {
-        event.preventDefault();
-        openModal(mdmpModalData[key]);
-      }
-    });
-  });
-
-  modalClose.addEventListener("click", closeModal);
-  modal.addEventListener("click", (event) => {
-    if (event.target === modal) {
-      closeModal();
-    }
-  });
-
-  document.addEventListener("keydown", (event) => {
-    if (event.key === "Escape" && modal.classList.contains("is-open")) {
-      closeModal();
-    }
-  });
+  window.ModalUtils.registerData('mdmp', { subtitleDefault, entries });
 })();

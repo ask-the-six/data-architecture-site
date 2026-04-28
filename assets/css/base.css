@@ -1,0 +1,59 @@
+@font-face {
+  font-family: "Geist";
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("../fonts/geist.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Geist Mono";
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("../fonts/geist-mono.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "VT323";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("../fonts/vt323.woff2") format("woff2");
+}
+
+:root {
+  --font-sans: "Geist", Arial, Helvetica, sans-serif;
+  --font-mono: "Geist Mono", "Courier New", monospace;
+  --font-display: "VT323", "Geist Mono", monospace;
+
+  --signal: #8cff9d;
+  --text: #d8e7dd;
+  --muted: #97aa9c;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.skip-link {
+  position: absolute;
+  top: -48px;
+  left: 12px;
+  z-index: 10000;
+  padding: 10px 14px;
+  background: #050907;
+  color: #ffe39a;
+  border: 1px solid rgba(173, 138, 55, 0.5);
+  border-radius: 8px;
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  text-decoration: none;
+  transition: top 0.16s ease;
+}
+
+.skip-link:focus {
+  top: 12px;
+  outline: 2px solid rgba(255, 200, 87, 0.8);
+  outline-offset: 2px;
+}
